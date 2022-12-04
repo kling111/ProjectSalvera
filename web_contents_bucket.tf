@@ -14,9 +14,10 @@ resource "aws_s3_bucket_versioning" "web_contents_bucket_versioning" {
   }
 }
 
-resource "aws_s3_bucket_object" "web_contents_html" {
+resource "aws_s3_object" "web_contents_html" {
   bucket = aws_s3_bucket.web_contents_bucket.id
   key    = "web_contents.html"
   acl    = "private"
   source = "web_contents.html"
+  etag = file("web_contents.html")
 }
