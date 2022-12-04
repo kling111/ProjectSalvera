@@ -1,11 +1,9 @@
-variable "linux_2_ami" {
+variable "webhost_ec2_ami" {
     type = string
-    description = "AMI for Linux 2"
-    default = "ami-0b0dcb5067f052a63"
+    description = "AMI for the webhost EC2"
 }
 
-variable "t2_micro_type" {
+variable "webhost_ec2_type" {
     type = string
-    description = "String for t2_micro EC2 instance type"
-    default = "t2.micro"
+    description = "Instance type of webhost EC2"
 }
