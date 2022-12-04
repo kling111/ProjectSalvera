@@ -35,7 +35,7 @@ resource "aws_instance" "ec2_webhost_apache" {
         sudo yum install httpd -y
         sudo systemctl start httpd
         sudo systemctl enable httpd
-        echo "Hello World, this is Karan" >> /var/www/html/index.html
+        echo "Hello World, this is Karan Lingineni" >> /var/www/html/index.html
     EOF
 
     tags = {
