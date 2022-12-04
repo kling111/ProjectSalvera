@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "web_contents_bucket" {
-  bucket = "web_contents_bucket"
+  bucket = "project_salvera_web_contents"
 }
 
 resource "aws_s3_bucket_acl" "web_contents_bucket_acl" {
