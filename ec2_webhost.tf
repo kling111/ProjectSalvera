@@ -10,7 +10,7 @@ resource "aws_instance" "ec2_webhost_apache" {
 
         connection {   
         host        = self.public_ip
-        user        = "root"
+        user        = "ec2-user"
         private_key = file("webhost_kp.pem")
         }   
     }
