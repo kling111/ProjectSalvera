@@ -18,6 +18,6 @@ resource "aws_s3_object" "web_contents_html" {
   bucket = aws_s3_bucket.web_contents_bucket.id
   key    = "web_contents.html"
   acl    = "private"
-  source = "web_contents.html"
-  etag = file("web_contents.html")
+  source = "salvera_web_contents/web_contents.html"
+  etag = file("salvera_web_contents/web_contents.html")
 }

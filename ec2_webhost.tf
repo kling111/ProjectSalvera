@@ -62,7 +62,6 @@ resource "aws_instance" "project_salvera_ec2_webhost" {
         sudo yum install httpd -y
         sudo systemctl start httpd
         sudo systemctl enable httpd
-        sudo aws s3 cp s3://project-salvera-web-contents/web_contents.html /var/www/html/index.html
     EOF
 
     tags = {
