@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "salvera_infrastate_bucket" {
-  bucket = "salvera_infrastate_bucket"
+  bucket = "salvera-infrastate-bucket"
 }
 
 resource "aws_s3_bucket_acl" "salvera_infrastate_bucket_acl" {
