@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-      bucket = "project-salvera-pipeline-state"
+      bucket = "salvera-infrastate-bucket"
       key = "salvera-infra-state.tfstate"
       encrypt = true
       region = "us-east-1"
