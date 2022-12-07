@@ -19,7 +19,7 @@ resource "aws_cloudwatch_log_group" "submit_form_logs" {
 }
 
 resource "aws_iam_role" "salvera_lambda_role" {
-  name = "serverless_lambda"
+  name = "salvera_lambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -37,5 +37,5 @@ resource "aws_iam_role" "salvera_lambda_role" {
 
 resource "aws_iam_role_policy_attachment" "salvera_lambda_policy" {
   role       = aws_iam_role.salvera_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AdministratorAccess"
 }
