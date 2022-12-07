@@ -1,15 +1,23 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import axios from "axios";
 import "./App.css";
 import { openCollectorRegistrationForm, backToHome } from "./index";
 
-function submitForm() {
-  console.log(document.getElementById("outlined-fullname").value);
-  console.log(document.getElementById("outlined-occupation").value);
-  console.log(document.getElementById("outlined-city").value);
-  console.log(document.getElementById("outlined-state").value);
-  console.log(document.getElementById("outlined-postalcode").value);
+async function submitForm() {
+  console.log("Here");
+  await axios.post(
+    "https://hd28kboqp5.execute-api.us-east-1.amazonaws.com/salvera_lambda_gw_stage/submit_form",
+    {
+      "Full Name": `${document.getElementById("outlined-fullname").value}`,
+      Occupation: `${document.getElementById("outlined-occupation").value}`,
+      City: `${document.getElementById("outlined-city").value}`,
+      State: `${document.getElementById("outlined-state").value}`,
+      "Postal Code": `${document.getElementById("outlined-postalcode").value}`,
+    }
+  );
+  console.log("done");
 }
 
 export function UserRegistrationForm() {
