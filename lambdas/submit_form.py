@@ -1,2 +1,12 @@
+import json
+
 def handler(event, context):
-    return "Hello World!"
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({
+            "Region": "Hello World!"
+        })
+    }
