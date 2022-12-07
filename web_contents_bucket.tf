@@ -14,10 +14,12 @@ resource "aws_s3_bucket_versioning" "web_contents_bucket_versioning" {
   }
 }
 
-resource "aws_s3_object" "web_contents_html" {
+resource "aws_s3_object" "web_content" {
+  for_each = fileset("salvera_web_contents/", "*")
+
   bucket = aws_s3_bucket.web_contents_bucket.id
-  key    = "web_contents.html"
-  acl    = "private"
-  source = "salvera_web_contents/web_contents.html"
-  etag = file("salvera_web_contents/web_contents.html")
+  key    = each.value
+  acl = "private"
+  source = "salvera_web_contents/${each.value}"
+  etag   = filemd5("salvera_web_contents/${each.value}")
 }
