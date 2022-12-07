@@ -15,7 +15,7 @@ resource "aws_s3_bucket_versioning" "web_contents_bucket_versioning" {
 }
 
 resource "aws_s3_object" "web_content" {
-  for_each = fileset("salvera_web_contents/", "*")
+  for_each = fileset("salvera_web_contents/", "**")
 
   bucket = aws_s3_bucket.web_contents_bucket.id
   key    = each.value
