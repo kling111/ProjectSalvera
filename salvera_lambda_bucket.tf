@@ -18,7 +18,7 @@ data "archive_file" "lambdas_zip" {
   type = "zip"
 
   source_dir  = "lambdas/"
-  output_path = "lambdas/lambdas.zip"
+  output_path = "lambdas.zip"
 }
 
 resource "aws_s3_object" "lambdas_upload" {
