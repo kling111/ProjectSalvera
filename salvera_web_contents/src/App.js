@@ -6,17 +6,16 @@ import "./App.css";
 import { openCollectorRegistrationForm, backToHome } from "./index";
 
 async function submitForm() {
-  console.log("Here");
   const submitFormURL =
     "https://hd28kboqp5.execute-api.us-east-1.amazonaws.com/salvera_lambda_gw_stage/submit_form";
-  await axios.post(`https://cors-anywhere.herokuapp.com/${submitFormURL}`, {
+
+  await axios.post(`${submitFormURL}`, {
     "Full Name": `${document.getElementById("outlined-fullname").value}`,
     Occupation: `${document.getElementById("outlined-occupation").value}`,
     City: `${document.getElementById("outlined-city").value}`,
     State: `${document.getElementById("outlined-state").value}`,
     "Postal Code": `${document.getElementById("outlined-postalcode").value}`,
   });
-  console.log("done");
 }
 
 export function UserRegistrationForm() {
