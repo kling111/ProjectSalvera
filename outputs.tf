@@ -9,3 +9,10 @@ output "base_url" {
 
   value = aws_apigatewayv2_stage.salvera_lambda_gw_stage.invoke_url
 }
+
+output "aurora_creds" {
+  description = "Base URL for API Gateway stage."
+
+  value = jsondecode(data.aws_secretsmanager_secret_version.salvera_aurora_creds.secret_string)["master_username"]
+
+}
