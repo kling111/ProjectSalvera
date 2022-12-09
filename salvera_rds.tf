@@ -6,9 +6,9 @@ resource "aws_rds_cluster" "salvera_aurora_cluster" {
 
 resource "aws_rds_cluster_instance" "salvera_aurora_instance" {
   count              = 1
-  identifier         = "${aws_rds_cluster.salvera_aurora_cluster.id}-${count.index}"
+  identifier         = "${aws_rds_cluster.salvera_aurora_cluster.id}-instance-${count.index}"
   cluster_identifier = aws_rds_cluster.salvera_aurora_cluster.id
   instance_class     = "db.t3.small"
   engine             = aws_rds_cluster.salvera_aurora_cluster.engine
-  engine_version     = aws_rds_cluster.salvera_aurora_cluster.engine_mode
+  engine_version     = aws_rds_cluster.salvera_aurora_cluster.engine_version
 }
