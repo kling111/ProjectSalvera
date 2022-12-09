@@ -1,8 +1,5 @@
-resource "aws_db_instance" "salvera_admins" {
-  allocated_storage    = 10
-  db_name              = "salvera_admins"
-  engine               = "mysql"
-  instance_class       = "db.t3.micro"
-  username             = "kdling"
-  password             = "ProjectSalver123"
+resource "aws_rds_cluster" "salvera_aurora_cluster" {
+  cluster_identifier      = "salvera_db_cluster"
+  master_username         = jsondecode(data.aws_secretsmanager_secret_version.salvera_aurora_creds.secret_string)["master_username"]
+  master_password         = jsondecode(data.aws_secretsmanager_secret_version.salvera_aurora_creds.secret_string)["master_password"]
 }
