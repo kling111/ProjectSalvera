@@ -11,4 +11,5 @@ resource "aws_rds_cluster_instance" "salvera_aurora_instance" {
   instance_class     = "db.t3.small"
   engine             = aws_rds_cluster.salvera_aurora_cluster.engine
   engine_version     = aws_rds_cluster.salvera_aurora_cluster.engine_version
+  publicly_accessible = true
 }
