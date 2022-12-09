@@ -9,13 +9,17 @@ async function submitForm() {
   const submitFormURL =
     "https://hd28kboqp5.execute-api.us-east-1.amazonaws.com/salvera_lambda_gw_stage/submit_form";
 
-  await axios.post(`${submitFormURL}`, {
-    "Full Name": `${document.getElementById("outlined-fullname").value}`,
-    Occupation: `${document.getElementById("outlined-occupation").value}`,
-    City: `${document.getElementById("outlined-city").value}`,
-    State: `${document.getElementById("outlined-state").value}`,
-    "Postal Code": `${document.getElementById("outlined-postalcode").value}`,
-  });
+  await axios
+    .post(`${submitFormURL}`, {
+      full_name: `${document.getElementById("outlined-fullname").value}`,
+      occupation: `${document.getElementById("outlined-occupation").value}`,
+      city: `${document.getElementById("outlined-city").value}`,
+      state: `${document.getElementById("outlined-state").value}`,
+      postal_code: `${document.getElementById("outlined-postalcode").value}`,
+    })
+    .then((response) => {
+      console.log(response.data);
+    });
 }
 
 export function UserRegistrationForm() {
@@ -50,7 +54,7 @@ export function UserRegistrationForm() {
       </Button>
       <br />
       <br />
-      <Button variant="standard" onClick={backToHome}>
+      <Button variant="text" onClick={backToHome}>
         Back to Home
       </Button>
     </div>
@@ -62,12 +66,12 @@ export function App() {
     <div className="App">
       <h1 className="App-header">Project Salvera</h1>
       <br />
-      <button onClick={openCollectorRegistrationForm}>
+      <Button variant="contained" onClick={openCollectorRegistrationForm}>
         Register Data Collector
-      </button>
+      </Button>
       <br />
       <br />
-      <button>Register Salvera Patient</button>
+      <Button variant="contained">Register Salvera Patient</Button>
     </div>
   );
 }
