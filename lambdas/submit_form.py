@@ -13,7 +13,7 @@ def handler(event, context):
     # Insert record in salvera_data_collectors table
     conn = create_aurora_connection()
     is_success = insert_data_collector_record(conn, record)
-    close_aurora_connection()
+    close_aurora_connection(conn)
 
     return create_lambda_response(record, is_success)
 
@@ -41,7 +41,7 @@ def insert_data_collector_record(conn, record):
         f'INSERT INTO salvera_data_collectors VALUES {(0, ) + record};')
 
     if response:
-        cur.commit()
+        conn.commit()
         return True
     return False
 
@@ -58,8 +58,7 @@ def create_aurora_connection():
 
 
 def retrieve_submission_parameters(event):
-    event_json = json.loads(event)
-    event_body = json.loads(event_json['body'])
+    event_body = json.loads(event['body'])
 
     full_name_split = event_body['full_name'].split(" ")
     del event_body['full_name']
