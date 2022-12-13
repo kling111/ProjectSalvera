@@ -2,9 +2,9 @@ resource "aws_apigatewayv2_api" "salvera_lambda_gw" {
   name          = "salvera_lambda_gw"
   protocol_type = "HTTP"
   cors_configuration {
-    allow_origins = ["*"]
-    allow_headers = ["*"]
-    allow_methods = ["*"]
+    allow_origins  = ["*"]
+    allow_headers  = ["*"]
+    allow_methods  = ["*"]
     expose_headers = ["*"]
   }
 }
@@ -47,6 +47,21 @@ resource "aws_apigatewayv2_route" "apigw_submit_form_route" {
 
   route_key = "POST /submit_form"
   target    = "integrations/${aws_apigatewayv2_integration.apigw_submit_form_integration.id}"
+}
+
+resource "aws_apigatewayv2_integration" "apigw_retrieve_data_collectors_integration" {
+  api_id = aws_apigatewayv2_api.salvera_lambda_gw.id
+
+  integration_uri    = aws_lambda_function.retrieve_data_collectors.invoke_arn
+  integration_type   = "AWS_PROXY"
+  integration_method = "GET"
+}
+
+resource "aws_apigatewayv2_route" "apigw_retrieve_data_collectors_route" {
+  api_id = aws_apigatewayv2_api.salvera_lambda_gw.id
+
+  route_key = "GET /retrieve_data_collectors"
+  target    = "integrations/${aws_apigatewayv2_integration.apigw_retrieve_data_collectors_integration.id}"
 }
 
 resource "aws_cloudwatch_log_group" "salvera_api_gw_logs" {

@@ -7,8 +7,9 @@ import {
   openCollectorRegistrationForm,
   backToHome,
   successfulRegistration,
+  openDataCollectionForm,
 } from "./index";
-import { MenuItem, Select } from "@mui/material";
+import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 
 async function submitUserRegistrationForm() {
   const submitRegistrationLambdaAPIURL =
@@ -23,12 +24,12 @@ async function submitUserRegistrationForm() {
       postal_code: `${document.getElementById("outlined-postalcode").value}`,
     })
     .then((resp) => {
-      successfulDataCollection(resp.data);
+      successfulRegistration(resp.data);
     });
 }
 
 async function submitPatientDataCollection(setSubmission) {
-  const submitPatientDataAPIURL = "TODO";
+  /*const submitPatientDataAPIURL = "TODO";
 
   await axios
     .post(`${submitPatientDataAPIURL}`, {
@@ -43,11 +44,14 @@ async function submitPatientDataCollection(setSubmission) {
     })
     .then((resp) => {
       setSubmission([resp.data.data_collector_name, resp.data.patient_name]);
-    });
+    });*/
+
+  return "Hello World";
 }
 
 async function getDataCollectors() {
-  const retrieveDataCollectorsAPIURL = "TODO";
+  const retrieveDataCollectorsAPIURL =
+    "https://hd28kboqp5.execute-api.us-east-1.amazonaws.com/salvera_lambda_gw_stage/retrieve_data_collectors";
 
   await axios.get(`${retrieveDataCollectorsAPIURL}`).then((resp) => {
     return resp.data;
@@ -78,7 +82,7 @@ export function PatientDataCollectionForm() {
 
   useEffect(() => {
     setSalveraCollectorsMap(getDataCollectors());
-  });
+  }, []);
 
   return (
     <div className="App">
@@ -102,15 +106,20 @@ export function PatientDataCollectionForm() {
       />
       <br />
       <br />
-      <Select
-        id="simple-select-data-collector"
-        labelId="simple-select-data-collector-label"
-        label="Data Collector"
-      >
-        {Object.entries(salveraCollectorsMap).map((dataCollector) => {
-          <MenuItem value={dataCollector[0]}> {dataCollector[1]} </MenuItem>;
-        })}
-      </Select>
+      <FormControl sx={{ minWidth: 195 }}>
+        <InputLabel id="simple-select-data-collector-label">Age</InputLabel>
+        <Select
+          labelId="simple-select-data-collector-label"
+          id="simple-select-data-collector"
+          label="Age"
+          autoWidth
+        >
+          {salveraCollectorsMap &&
+            Object.entries(salveraCollectorsMap).map((dataCollector) => (
+              <MenuItem value={dataCollector[0]}> {dataCollector[1]} </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
       <br />
       <br />
       <Button
@@ -187,10 +196,9 @@ export function App() {
       </Button>
       <br />
       <br />
-      <Button variant="contained">Register Salvera Patient</Button>
-      <br />
-      <br />
-      <h1>{false && "Hello World"}</h1>
+      <Button variant="contained" onClick={openDataCollectionForm}>
+        Register Salvera Patient
+      </Button>
     </div>
   );
 }

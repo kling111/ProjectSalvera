@@ -1,7 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { App, UserRegistrationForm, SuccesfulRegistrationMessage } from "./App";
+import {
+  App,
+  UserRegistrationForm,
+  SuccesfulRegistrationMessage,
+  PatientDataCollectionForm,
+} from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -15,6 +20,14 @@ export function openCollectorRegistrationForm() {
   root.render(
     <React.StrictMode>
       <UserRegistrationForm />
+    </React.StrictMode>
+  );
+}
+
+export function openDataCollectionForm() {
+  root.render(
+    <React.StrictMode>
+      <PatientDataCollectionForm />
     </React.StrictMode>
   );
 }
