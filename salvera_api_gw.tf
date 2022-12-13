@@ -34,19 +34,19 @@ resource "aws_apigatewayv2_stage" "salvera_lambda_gw_stage" {
   }
 }
 
-resource "aws_apigatewayv2_integration" "apigw_submit_form_integration" {
+resource "aws_apigatewayv2_integration" "apigw_submit_collector_registration_integration" {
   api_id = aws_apigatewayv2_api.salvera_lambda_gw.id
 
-  integration_uri    = aws_lambda_function.submit_form.invoke_arn
+  integration_uri    = aws_lambda_function.submit_collector_registration.invoke_arn
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
 }
 
-resource "aws_apigatewayv2_route" "apigw_submit_form_route" {
+resource "aws_apigatewayv2_route" "apigw_submit_collector_registration_route" {
   api_id = aws_apigatewayv2_api.salvera_lambda_gw.id
 
-  route_key = "POST /submit_form"
-  target    = "integrations/${aws_apigatewayv2_integration.apigw_submit_form_integration.id}"
+  route_key = "POST /submit_collector_registration"
+  target    = "integrations/${aws_apigatewayv2_integration.apigw_submit_collector_registration_integration.id}"
 }
 
 resource "aws_apigatewayv2_integration" "apigw_retrieve_data_collectors_integration" {
@@ -70,10 +70,10 @@ resource "aws_cloudwatch_log_group" "salvera_api_gw_logs" {
   retention_in_days = 30
 }
 
-resource "aws_lambda_permission" "submit_form_api_gw_permission" {
+resource "aws_lambda_permission" "submit_collector_registration_api_gw_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.submit_form.function_name
+  function_name = aws_lambda_function.submit_collector_registration.function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.salvera_lambda_gw.execution_arn}/*/*"
