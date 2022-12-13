@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { App, UserRegistrationForm } from "./App";
+import { App, UserRegistrationForm, SuccesfulRegistrationMessage } from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -12,7 +12,6 @@ root.render(
 );
 
 export function openCollectorRegistrationForm() {
-  //const root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(
     <React.StrictMode>
       <UserRegistrationForm />
@@ -20,8 +19,18 @@ export function openCollectorRegistrationForm() {
   );
 }
 
+export function successfulRegistration(response) {
+  root.render(
+    <React.StrictMode>
+      <SuccesfulRegistrationMessage
+        first_name={response.first_name}
+        last_name={response.last_name}
+      />
+    </React.StrictMode>
+  );
+}
+
 export function backToHome() {
-  //const root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(
     <React.StrictMode>
       <App />
