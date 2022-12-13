@@ -54,7 +54,7 @@ resource "aws_apigatewayv2_integration" "apigw_retrieve_data_collectors_integrat
 
   integration_uri    = aws_lambda_function.retrieve_data_collectors.invoke_arn
   integration_type   = "AWS_PROXY"
-  integration_method = "GET"
+  integration_method = "POST"
 }
 
 resource "aws_apigatewayv2_route" "apigw_retrieve_data_collectors_route" {

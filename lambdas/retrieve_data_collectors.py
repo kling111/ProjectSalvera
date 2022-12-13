@@ -32,8 +32,9 @@ def close_aurora_connection(conn):
 
 def retrieve_data_collector_records(conn):
     cur = conn.cursor()
-    response = cur.execute(
-        f'SELECT * FROM salvera_data_collectors;').fetchall()
+    cur.execute(
+        f'SELECT * FROM salvera_data_collectors;')
+    response = cur.fetchall()
 
     user_id_name_map = {record[0]: " ".join(
         [record[1], record[2]]) for record in response}
