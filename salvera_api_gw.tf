@@ -106,7 +106,7 @@ resource "aws_lambda_permission" "retrieve_data_collectors_api_gw_permission" {
 resource "aws_lambda_permission" "submit_data_collection_api_gw_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.retrieve_data_collectors.function_name
+  function_name = aws_lambda_function.submit_data_collection.function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.salvera_lambda_gw.execution_arn}/*/*"
