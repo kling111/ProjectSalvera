@@ -64,6 +64,21 @@ resource "aws_apigatewayv2_route" "apigw_retrieve_data_collectors_route" {
   target    = "integrations/${aws_apigatewayv2_integration.apigw_retrieve_data_collectors_integration.id}"
 }
 
+resource "aws_apigatewayv2_integration" "apigw_submit_data_collection_integration" {
+  api_id = aws_apigatewayv2_api.salvera_lambda_gw.id
+
+  integration_uri    = aws_lambda_function.submit_data_collection.invoke_arn
+  integration_type   = "AWS_PROXY"
+  integration_method = "POST"
+}
+
+resource "aws_apigatewayv2_route" "apigw_submit_data_collection_route" {
+  api_id = aws_apigatewayv2_api.salvera_lambda_gw.id
+
+  route_key = "POST /submit_data_collection"
+  target    = "integrations/${aws_apigatewayv2_integration.apigw_submit_data_collection_integration.id}"
+}
+
 resource "aws_cloudwatch_log_group" "salvera_api_gw_logs" {
   name = "/aws/api_gw/${aws_apigatewayv2_api.salvera_lambda_gw.name}"
 
@@ -80,6 +95,15 @@ resource "aws_lambda_permission" "submit_collector_registration_api_gw_permissio
 }
 
 resource "aws_lambda_permission" "retrieve_data_collectors_api_gw_permission" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.retrieve_data_collectors.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.salvera_lambda_gw.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "submit_data_collection_api_gw_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.retrieve_data_collectors.function_name

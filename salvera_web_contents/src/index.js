@@ -6,6 +6,7 @@ import {
   UserRegistrationForm,
   SuccesfulRegistrationMessage,
   PatientDataCollectionForm,
+  SuccesfulCollectionMessage,
 } from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -39,6 +40,14 @@ export function successfulRegistration(response) {
         first_name={response.first_name}
         last_name={response.last_name}
       />
+    </React.StrictMode>
+  );
+}
+
+export function successfulDataCollection(response) {
+  root.render(
+    <React.StrictMode>
+      <SuccesfulCollectionMessage patient_name={response.patient_name} />
     </React.StrictMode>
   );
 }

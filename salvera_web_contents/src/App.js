@@ -7,6 +7,7 @@ import {
   openCollectorRegistrationForm,
   backToHome,
   successfulRegistration,
+  successfulDataCollection,
   openDataCollectionForm,
 } from "./index";
 
@@ -27,6 +28,28 @@ async function submitUserRegistrationForm() {
     });
 }
 
+async function submitPatientDataCollectionForm() {
+  const submitDataCollectionLambdaAPIURL =
+    "https://hd28kboqp5.execute-api.us-east-1.amazonaws.com/salvera_lambda_gw_stage/submit_data_collection";
+
+  await axios
+    .post(`${submitDataCollectionLambdaAPIURL}`, {
+      full_name: `${document.getElementById("outlined-full-name").value}`,
+      bmi: `${document.getElementById("outlined-bmi").value}`,
+      city: `${document.getElementById("outlined-city").value}`,
+      state: `${document.getElementById("outlined-state").value}`,
+      postal_code: `${document.getElementById("outlined-postal-code").value}`,
+      data_collector_id: `${
+        document.getElementById("outlined-data-collector-id").value
+      }`,
+    })
+    .then(() => {
+      successfulDataCollection({
+        patient_name: `${document.getElementById("outlined-full-name").value}`,
+      });
+    });
+}
+
 export function SuccesfulRegistrationMessage(props) {
   return (
     <div className="App">
@@ -36,6 +59,27 @@ export function SuccesfulRegistrationMessage(props) {
       <h1>
         Welcome to Project Salvera, {props.first_name} {props.last_name}!
       </h1>
+      <br />
+      <br />
+      <Button variant="text" onClick={backToHome}>
+        Back to Home
+      </Button>
+    </div>
+  );
+}
+
+export function SuccesfulCollectionMessage(props) {
+  return (
+    <div className="App">
+      <h1 className="App-header">Project Salvera</h1>
+      <br />
+      <br />
+      <h1>Thank you! We've collected {props.patient_name}'s' information.</h1>
+      <br />
+      <br />
+      <Button variant="text" onClick={openDataCollectionForm}>
+        Back to Data Collection
+      </Button>
       <br />
       <br />
       <Button variant="text" onClick={backToHome}>
@@ -79,7 +123,7 @@ export function PatientDataCollectionForm() {
       />
       <br />
       <br />
-      <Button variant="contained" onClick={submitUserRegistrationForm}>
+      <Button variant="contained" onClick={submitPatientDataCollectionForm}>
         Submit
       </Button>
       <br />
