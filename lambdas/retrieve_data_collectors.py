@@ -9,19 +9,19 @@ logger.setLevel(logging.INFO)
 def handler(event, context):
     # Retrive names and IDs from salvera_data_collectors table
     conn = create_aurora_connection()
-    user_id_name_map = retrieve_data_collector_records(conn)
+    records = retrieve_data_collector_records(conn)
     close_aurora_connection(conn)
 
-    return create_lambda_response(user_id_name_map)
+    return create_lambda_response(records)
 
 
-def create_lambda_response(user_id_name_map):
+def create_lambda_response(records):
     response = {"headers": {
         "Content-Type": "application/json"
     }}
 
     response['statusCode'] = 200
-    response['body'] = json.dumps(user_id_name_map)
+    response['body'] = json.dumps({'records': records})
 
     return response
 
@@ -36,9 +36,11 @@ def retrieve_data_collector_records(conn):
         f'SELECT * FROM salvera_data_collectors;')
     response = cur.fetchall()
 
-    user_id_name_map = {record[0]: " ".join(
-        [record[1], record[2]]) for record in response}
-    return user_id_name_map
+    columns_names = ['collector_id', 'first_name', 'last_name',
+                     'occupation', 'city', 'state', 'postal_code']
+    records = [{key: value for key, value in zip(
+        columns_names, record)} for record in response]
+    return records
 
 
 def create_aurora_connection():
