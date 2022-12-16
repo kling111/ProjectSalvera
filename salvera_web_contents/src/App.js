@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import React, { useEffect, useState, useCallback } from "react";
+import { TextField, Button } from "@mui/material";
+import {
+  GoogleMap,
+  HeatmapLayer,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import "./App.css";
@@ -10,6 +14,7 @@ import {
   successfulRegistration,
   successfulDataCollection,
   openDataCollectionForm,
+  openPatientDataHeatmap,
 } from "./index";
 
 async function submitUserRegistrationForm() {
@@ -35,6 +40,18 @@ async function retrieveDataCollectors() {
 
   let records;
   await axios.get(`${retrieveDataCollectorsLambdaAPIURL}`).then((resp) => {
+    records = resp.data.records;
+  });
+
+  return records;
+}
+
+async function retrievePatientData() {
+  const retrievePatientDataLambdaAPIURL =
+    "https://hd28kboqp5.execute-api.us-east-1.amazonaws.com/salvera_lambda_gw_stage/retrieve_patient_data";
+
+  let records;
+  await axios.get(`${retrievePatientDataLambdaAPIURL}`).then((resp) => {
     records = resp.data.records;
   });
 
@@ -191,6 +208,67 @@ export function UserRegistrationForm() {
   );
 }
 
+const containerStyle = {
+  width: "1000px",
+  height: "500px",
+};
+
+const center = {
+  lat: 37.782,
+  lng: -122.447,
+};
+
+const libraries = ["visualization"];
+
+export function PatientDataHeatmap(props) {
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: `${process.env.REACT_APP_GCP_API_KEY}`,
+    libraries: libraries,
+  });
+
+  const [bmiHeatData, setBMIHeatData] = useState([]);
+
+  const renderMap = useCallback(() => {
+    const data = [];
+    props.patientData.forEach((record) => {
+      data.push({
+        location: new window.google.maps.LatLng(
+          parseFloat(record.latitude),
+          parseFloat(record.longitude)
+        ),
+        weight: parseFloat(record.bmi),
+      });
+    });
+
+    setBMIHeatData(data);
+  }, [props]);
+
+  if (loadError) {
+    return <div>Map cannot be loaded right now, sorry.</div>;
+  }
+
+  return (
+    <div className="App">
+      <h1 className="App-header">Patient Data Heatmap</h1>
+      <br />
+      <br />
+      <br />
+      {isLoaded ? (
+        <div className="Heatmap-container">
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={12}
+            onLoad={renderMap}
+          >
+            {bmiHeatData ? <HeatmapLayer data={bmiHeatData} /> : null}
+          </GoogleMap>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 const dataCollectorColumns = [
   { field: "collector_id", headerName: "Data Collector ID", width: 125 },
   { field: "first_name", headerName: "First Name", width: 90 },
@@ -206,25 +284,34 @@ const dataCollectorColumns = [
 ];
 
 const patientDataColumns = [
-  { field: "patient_uuid", headerName: "Patient UUID", width: 90 },
-  { field: "first_name", headerName: "First Name", width: 130 },
-  { field: "last_name", headerName: "Last Name", width: 130 },
-  { field: "bmi", headerName: "BMI", width: 130 },
+  { field: "patient_uuid", headerName: "Patient UUID", width: 100 },
+  { field: "first_name", headerName: "First Name", width: 90 },
+  { field: "last_name", headerName: "Last Name", width: 100 },
+  { field: "bmi", headerName: "BMI", width: 60 },
   {
     field: "city",
     headerName: "City",
-    width: 90,
+    width: 80,
   },
-  { field: "state", headerName: "State", width: 130 },
-  { field: "postal_code", headerName: "Postal Code", width: 130 },
-  { field: "data_collector_id", headerName: "Data Collector ID", width: 130 },
+  { field: "state", headerName: "State", width: 60 },
+  { field: "postal_code", headerName: "Postal Code", width: 100 },
+  { field: "latitude", headerName: "Latitude", width: 100 },
+  { field: "longitude", headerName: "Longitude", width: 100 },
+  { field: "data_collector_id", headerName: "Data Collector ID", width: 125 },
 ];
 
 export function App() {
   const [dataCollectorRows, setDataCollectorRows] = useState([]);
   useEffect(() => {
-    retrieveDataCollectors().then((resp) => {
-      setDataCollectorRows(resp);
+    retrieveDataCollectors().then((records) => {
+      setDataCollectorRows(records);
+    });
+  }, []);
+
+  const [patientDataRows, setPatientDataRows] = useState([]);
+  useEffect(() => {
+    retrievePatientData().then((records) => {
+      setPatientDataRows(records);
     });
   }, []);
 
@@ -242,6 +329,14 @@ export function App() {
       </Button>
       <br />
       <br />
+      <Button
+        variant="contained"
+        onClick={() => openPatientDataHeatmap(patientDataRows)}
+      >
+        Patient Data Visualization
+      </Button>
+      <br />
+      <br />
       <div
         style={{ position: "absolute", left: 13, height: 400, width: "48.5%" }}
       >
@@ -250,7 +345,8 @@ export function App() {
           rows={dataCollectorRows}
           getRowId={(row) => row.collector_id}
           columns={dataCollectorColumns}
-          pageSize={10}
+          pageSize={100}
+          rowsPerPageOptions={[]}
         />
       </div>
       <div
@@ -258,10 +354,11 @@ export function App() {
       >
         <h2> Patient Data Table </h2>
         <DataGrid
-          rows={dataCollectorRows}
-          getRowId={(row) => row.collector_id}
+          rows={patientDataRows}
+          getRowId={(row) => row.patient_uuid}
           columns={patientDataColumns}
-          pageSize={10}
+          pageSize={100}
+          rowsPerPageOptions={[]}
         />
       </div>
     </div>

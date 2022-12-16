@@ -7,6 +7,7 @@ import {
   SuccesfulRegistrationMessage,
   PatientDataCollectionForm,
   SuccesfulCollectionMessage,
+  PatientDataHeatmap,
 } from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -29,6 +30,14 @@ export function openDataCollectionForm() {
   root.render(
     <React.StrictMode>
       <PatientDataCollectionForm />
+    </React.StrictMode>
+  );
+}
+
+export function openPatientDataHeatmap(patientData) {
+  root.render(
+    <React.StrictMode>
+      <PatientDataHeatmap patientData={patientData} />
     </React.StrictMode>
   );
 }
