@@ -3,14 +3,14 @@ import json
 import boto3
 
 dynamodb = boto3.resource('dynamodb')
+s3 = boto3.resource('s3')
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
-    patient_data_ddb = dynamodb.Table('salvera_patient_data')
-    patient_data = scan_patient_data(patient_data_ddb)
+    patient_data = get_patient_data()
 
     return create_lambda_response(patient_data)
 
@@ -21,17 +21,13 @@ def create_lambda_response(data):
     }}
 
     response['statusCode'] = 200
-    response['body'] = json.dumps({'records': data})
+    response['body'] = json.dumps(data)
 
     return response
 
 
-def scan_patient_data(ddb):
-    response = ddb.scan()
-    data = response['Items']
+def get_patient_data():
+    patient_data_obj = s3.Object('project-salvera-data', 'bmi.json')
+    patient_data_json = json.loads(patient_data_obj.get()['Body'].read())
 
-    while 'LastEvaluatedKey' in response:
-        response = ddb.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-        data.extend(response['Items'])
-
-    return data
+    return patient_data_json

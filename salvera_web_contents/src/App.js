@@ -1,13 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { TextField, Button } from "@mui/material";
-import {
-  GoogleMap,
-  HeatmapLayer,
-  useJsApiLoader,
-} from "@react-google-maps/api";
+import React, { useEffect, useState } from "react";
+import { TextField, Button, Slider } from "@mui/material";
+import { Layer, Map, Source } from "react-map-gl";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import "./App.css";
+
 import {
   openCollectorRegistrationForm,
   backToHome,
@@ -16,6 +12,11 @@ import {
   openDataCollectionForm,
   openPatientDataHeatmap,
 } from "./index";
+import { heatmapLayer } from "./heatmapLayer";
+import { marks, patientDataColumns, dataCollectorColumns } from "./constants";
+
+import "./App.css";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 async function submitUserRegistrationForm() {
   const submitRegistrationLambdaAPIURL =
@@ -208,97 +209,98 @@ export function UserRegistrationForm() {
   );
 }
 
-const containerStyle = {
-  width: "1000px",
-  height: "500px",
-};
-
-const center = {
-  lat: 37.782,
-  lng: -122.447,
-};
-
-const libraries = ["visualization"];
-
 export function PatientDataHeatmap(props) {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: `${process.env.REACT_APP_GCP_API_KEY}`,
-    libraries: libraries,
+  const patientDataGeoJSON = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  props.patientData.forEach((record) => {
+    patientDataGeoJSON.features.push({
+      type: "Feature",
+      properties: { bmi: parseFloat(record.bmi) },
+      geometry: {
+        type: "Point",
+        coordinates: [
+          parseFloat(record.longitude),
+          parseFloat(record.latitude),
+        ],
+      },
+    });
   });
 
-  const [bmiHeatData, setBMIHeatData] = useState([]);
+  function filterPatientBMIGeoJSON(filterValue) {
+    const data = {
+      type: "FeatureCollection",
+      features: [],
+    };
 
-  const renderMap = useCallback(() => {
-    const data = [];
     props.patientData.forEach((record) => {
-      data.push({
-        location: new window.google.maps.LatLng(
-          parseFloat(record.latitude),
-          parseFloat(record.longitude)
-        ),
-        weight: parseFloat(record.bmi),
-      });
+      if (filterValue === parseInt(record.data_collector_id)) {
+        data.features.push({
+          type: "Feature",
+          properties: { bmi: parseFloat(record.bmi) },
+          geometry: {
+            type: "Point",
+            coordinates: [
+              parseFloat(record.longitude),
+              parseFloat(record.latitude),
+            ],
+          },
+        });
+      }
     });
 
-    setBMIHeatData(data);
-  }, [props]);
-
-  if (loadError) {
-    return <div>Map cannot be loaded right now, sorry.</div>;
+    return data;
   }
+
+  const [filteredPatientBMI, setFilteredPatientBMI] = useState(
+    filterPatientBMIGeoJSON(1)
+  );
 
   return (
     <div className="App">
       <h1 className="App-header">Patient Data Heatmap</h1>
       <br />
       <br />
+      <Slider
+        sx={{ width: 400 }}
+        aria-label="Date"
+        defaultValue={1}
+        valueLabelDisplay="auto"
+        step={1}
+        marks={marks}
+        min={1}
+        max={6}
+        onChange={(_, newMonth) =>
+          setFilteredPatientBMI(filterPatientBMIGeoJSON(newMonth))
+        }
+      />
       <br />
-      {isLoaded ? (
-        <div className="Heatmap-container">
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={12}
-            onLoad={renderMap}
-          >
-            {bmiHeatData ? <HeatmapLayer data={bmiHeatData} /> : null}
-          </GoogleMap>
-        </div>
-      ) : null}
+      <br />
+      <br />
+      <Map
+        initialViewState={{
+          longitude: -122.44,
+          latitude: 37.76,
+          zoom: 11,
+        }}
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+      >
+        {filteredPatientBMI.features.length ? (
+          <Source id="patientBMIData" type="geojson" data={filteredPatientBMI}>
+            <Layer {...heatmapLayer}></Layer>
+          </Source>
+        ) : null}
+      </Map>
+      <br />
+      <Button variant="text" onClick={backToHome}>
+        Back to Home
+      </Button>
     </div>
   );
 }
-
-const dataCollectorColumns = [
-  { field: "collector_id", headerName: "Data Collector ID", width: 125 },
-  { field: "first_name", headerName: "First Name", width: 90 },
-  { field: "last_name", headerName: "Last Name", width: 100 },
-  { field: "occupation", headerName: "Occupation", width: 140 },
-  {
-    field: "city",
-    headerName: "City",
-    width: 80,
-  },
-  { field: "state", headerName: "State", width: 60 },
-  { field: "postal_code", headerName: "Postal Code", width: 100 },
-];
-
-const patientDataColumns = [
-  { field: "patient_uuid", headerName: "Patient UUID", width: 100 },
-  { field: "first_name", headerName: "First Name", width: 90 },
-  { field: "last_name", headerName: "Last Name", width: 100 },
-  { field: "bmi", headerName: "BMI", width: 60 },
-  {
-    field: "city",
-    headerName: "City",
-    width: 80,
-  },
-  { field: "state", headerName: "State", width: 60 },
-  { field: "postal_code", headerName: "Postal Code", width: 100 },
-  { field: "latitude", headerName: "Latitude", width: 100 },
-  { field: "longitude", headerName: "Longitude", width: 100 },
-  { field: "data_collector_id", headerName: "Data Collector ID", width: 125 },
-];
 
 export function App() {
   const [dataCollectorRows, setDataCollectorRows] = useState([]);
@@ -332,6 +334,7 @@ export function App() {
       <Button
         variant="contained"
         onClick={() => openPatientDataHeatmap(patientDataRows)}
+        disabled={!patientDataRows.length ? true : false}
       >
         Patient Data Visualization
       </Button>

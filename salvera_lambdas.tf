@@ -99,3 +99,29 @@ resource "aws_cloudwatch_log_group" "submit_data_collection_logs" {
 
   retention_in_days = 30
 }
+
+resource "aws_lambda_function" "upload_bmi_json" {
+  function_name = "UploadBMIJson"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambdas_upload.key
+
+  runtime = "python3.9"
+  handler = "upload_bmi_json.handler"
+
+  source_code_hash = data.archive_file.lambdas_zip.output_base64sha256
+
+  role = aws_iam_role.salvera_lambda_role.arn
+}
+
+resource "aws_lambda_event_source_mapping" "upload_bmi_json_event_source" {
+  event_source_arn  = aws_dynamodb_table.salvera_patient_data.stream_arn
+  function_name     = aws_lambda_function.upload_bmi_json.arn
+  starting_position = "LATEST"
+}
+
+resource "aws_cloudwatch_log_group" "upload_bmi_json_logs" {
+  name = "/aws/lambda/${aws_lambda_function.upload_bmi_json.function_name}"
+
+  retention_in_days = 30
+}
