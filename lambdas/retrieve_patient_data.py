@@ -26,7 +26,7 @@ def create_lambda_response(data):
 
 
 def get_patient_data():
-    patient_data_obj = s3.Object('project-salvera-data', 'bmi.json')
+    patient_data_obj = s3.Object('project-salvera-data', 'patient_bmi.json')
     patient_data_json = json.loads(patient_data_obj.get()['Body'].read())
 
     return patient_data_json

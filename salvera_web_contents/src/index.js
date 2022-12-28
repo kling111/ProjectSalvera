@@ -4,9 +4,9 @@ import "./index.css";
 import {
   App,
   UserRegistrationForm,
-  SuccesfulRegistrationMessage,
+  SuccessfulRegistrationMessage,
   PatientDataCollectionForm,
-  SuccesfulCollectionMessage,
+  SuccessfulCollectionMessage,
   PatientDataHeatmap,
 } from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -45,7 +45,7 @@ export function openPatientDataHeatmap(patientData) {
 export function successfulRegistration(response) {
   root.render(
     <React.StrictMode>
-      <SuccesfulRegistrationMessage
+      <SuccessfulRegistrationMessage
         first_name={response.first_name}
         last_name={response.last_name}
       />
@@ -56,7 +56,7 @@ export function successfulRegistration(response) {
 export function successfulDataCollection(response) {
   root.render(
     <React.StrictMode>
-      <SuccesfulCollectionMessage patient_name={response.patient_name} />
+      <SuccessfulCollectionMessage patient_name={response.patient_name} />
     </React.StrictMode>
   );
 }

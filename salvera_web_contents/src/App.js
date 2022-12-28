@@ -85,7 +85,7 @@ async function submitPatientDataCollectionForm() {
     });
 }
 
-export function SuccesfulRegistrationMessage(props) {
+export function SuccessfulRegistrationMessage(props) {
   return (
     <div className="App">
       <h1 className="App-header">Project Salvera</h1>
@@ -103,7 +103,7 @@ export function SuccesfulRegistrationMessage(props) {
   );
 }
 
-export function SuccesfulCollectionMessage(props) {
+export function SuccessfulCollectionMessage(props) {
   return (
     <div className="App">
       <h1 className="App-header">Project Salvera</h1>
