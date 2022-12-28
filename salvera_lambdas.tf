@@ -29,6 +29,8 @@ resource "aws_lambda_function" "submit_collector_registration" {
   runtime = "python3.9"
   handler = "submit_collector_registration.handler"
 
+  timeout = 900
+
   source_code_hash = data.archive_file.lambdas_zip.output_base64sha256
 
   role = aws_iam_role.salvera_lambda_role.arn
@@ -48,6 +50,8 @@ resource "aws_lambda_function" "retrieve_data_collectors" {
 
   runtime = "python3.9"
   handler = "retrieve_data_collectors.handler"
+
+  timeout = 900
 
   source_code_hash = data.archive_file.lambdas_zip.output_base64sha256
 
@@ -69,6 +73,8 @@ resource "aws_lambda_function" "retrieve_patient_data" {
   runtime = "python3.9"
   handler = "retrieve_patient_data.handler"
 
+  timeout = 900
+
   source_code_hash = data.archive_file.lambdas_zip.output_base64sha256
 
   role = aws_iam_role.salvera_lambda_role.arn
@@ -89,6 +95,8 @@ resource "aws_lambda_function" "submit_data_collection" {
   runtime = "python3.9"
   handler = "submit_data_collection.handler"
 
+  timeout = 900
+
   source_code_hash = data.archive_file.lambdas_zip.output_base64sha256
 
   role = aws_iam_role.salvera_lambda_role.arn
@@ -108,6 +116,8 @@ resource "aws_lambda_function" "upload_bmi_json" {
 
   runtime = "python3.9"
   handler = "upload_bmi_json.handler"
+
+  timeout = 900
 
   source_code_hash = data.archive_file.lambdas_zip.output_base64sha256
 
