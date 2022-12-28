@@ -25,7 +25,7 @@ def create_lambda_response(data):
     response['body'] = json.dumps({'records': data})
 
     s3.put_object(Body=response['body'],
-                  Bucket='project-salvera-data',
+                  Bucket='project-salvera-data-bucket',
                   Key='patient_bmi.json')
 
     return response
